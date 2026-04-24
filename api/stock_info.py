@@ -21,6 +21,31 @@ class Holding(db.Model):
     symbol = db.Column("symbol", db.String(100), nullable=False)
     quantity = db.Column("quantity", db.Float, nullable=False)
 
+
+@app.route("/create_user/<username>/<password>")
+def create_user(username, password):
+    try:
+        user = User(username=username, password=password, balance=0.0)
+        db.session.add(user)
+        db.session.commit()
+
+        return {
+            "created": True,
+            "user": {
+                "user_id": user.id,
+                "username": user.username,
+                "balance": user.balance,
+                "holdings": []
+            }
+        }, 201
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return {"created": False, "error": str(e)}, 500
+
+    finally:
+        db.session.remove()
+
 @app.route("/authenticate_user/<username>/<password>")
 def authenticate_user(username, password):
     result = db.session.execute(
@@ -91,4 +116,4 @@ with app.app_context():
     db.create_all()
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0")
