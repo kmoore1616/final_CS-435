@@ -2,6 +2,7 @@ package com.example.finalinvestmentapp
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
@@ -95,27 +96,17 @@ class StocksDBHelper (context: Context):
         db.delete(TABLE_HOLDINGS, null, null)
     }
 
-    fun getAllHoldings(): ArrayList<Holding>{
+    fun getAllHoldingsCursor(): Cursor {
         val db = readableDatabase
-        val holdingArray = arrayListOf<Holding>()
-        val cursor = db.query(
+        return db.query(
             TABLE_HOLDINGS,
-            arrayOf(COLUMN_SYMBOL, COLUMN_QUANTITY),
+            arrayOf(COLUMN_ID, COLUMN_SYMBOL, COLUMN_QUANTITY),
             null,
             null,
             null,
             null,
             COLUMN_SYMBOL
         )
-        while(cursor.moveToNext()){
-            val holding = Holding(
-                cursor.getString(0),
-                cursor.getDouble(1)
-            )
-            holdingArray.add(holding)
-        }
-        cursor.close()
-        return holdingArray
     }
 
 

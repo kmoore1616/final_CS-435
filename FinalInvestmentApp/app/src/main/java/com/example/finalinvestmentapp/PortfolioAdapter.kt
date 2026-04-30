@@ -1,5 +1,6 @@
 package com.example.finalinvestmentapp
 
+import android.database.Cursor
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class PortfolioAdapter(
-    private val holdings: ArrayList<Holding>
+    private var holdingsCursor: Cursor
 ) : RecyclerView.Adapter<PortfolioAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -16,9 +17,12 @@ class PortfolioAdapter(
         private val symbolTextView: TextView = itemView.findViewById(android.R.id.text1)
         private val quantityTextView: TextView = itemView.findViewById(android.R.id.text2)
 
-        fun update(holding: Holding) {
-            symbolTextView.text = holding.symbol
-            quantityTextView.text = holding.quantity.toString()
+        fun update(cursor: Cursor) {
+            val symbol = cursor.getString(cursor.getColumnIndexOrThrow("symbol"))
+            val quantity = cursor.getDouble(cursor.getColumnIndexOrThrow("quantity"))
+
+            symbolTextView.text = symbol
+            quantityTextView.text = quantity.toString()
         }
     }
 
@@ -29,10 +33,17 @@ class PortfolioAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.update(holdings[position])
+        if (holdingsCursor.moveToPosition(position)) {
+            holder.update(holdingsCursor)
+        }
     }
 
     override fun getItemCount(): Int {
-        return holdings.size
+        return holdingsCursor.count
+    }
+
+    fun swapCursor(newCursor: Cursor) {
+        holdingsCursor = newCursor
+        notifyDataSetChanged()
     }
 }

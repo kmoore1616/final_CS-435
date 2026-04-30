@@ -1,5 +1,6 @@
 package com.example.finalinvestmentapp
 
+import android.database.Cursor
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 class Portfolio : AppCompatActivity() {
     private lateinit var stocksDBHelper: StocksDBHelper
     private lateinit var holdingsRecyclerView: RecyclerView
+    private lateinit var holdingsCursor: Cursor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,8 +25,14 @@ class Portfolio : AppCompatActivity() {
         }
 
         stocksDBHelper = StocksDBHelper(this)
+        holdingsCursor = stocksDBHelper.getAllHoldingsCursor()
         holdingsRecyclerView = findViewById(R.id.holdingsRecyclerView)
         holdingsRecyclerView.layoutManager = LinearLayoutManager(this)
-        holdingsRecyclerView.adapter = PortfolioAdapter(stocksDBHelper.getAllHoldings())
+        holdingsRecyclerView.adapter = PortfolioAdapter(holdingsCursor)
+    }
+
+    override fun onDestroy() {
+        holdingsCursor.close()
+        super.onDestroy()
     }
 }

@@ -1,5 +1,6 @@
 package com.example.finalinvestmentapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -9,9 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private lateinit var usernameField: EditText
@@ -43,12 +42,10 @@ class MainActivity : AppCompatActivity() {
                 errorField.visibility = View.VISIBLE
                 errorField.text = getString(R.string.pass_err)
             } else {
-                val user = BackendAPIHelper.authenticateUser(username,password)
+                val user = BackendAPIHelper.authenticateUser(username,password, stocksDBHelper)
                 if (user != null) {
-                    withContext(Dispatchers.IO) {
-                        stocksDBHelper.replaceHoldings(Holding.tempHoldingArray)
-                    }
                     errorField.visibility = View.GONE
+                    startActivity(Intent(applicationContext, Portfolio::class.java))
                 } else {
                     errorField.visibility = View.VISIBLE
                     errorField.text = getString(R.string.login_err)
@@ -64,7 +61,15 @@ class MainActivity : AppCompatActivity() {
                 errorField.visibility = View.VISIBLE
                 errorField.text = getString(R.string.pass_err)
             } else {
-                BackendAPIHelper.createUser(username,password)
+                val user = BackendAPIHelper.createUser(username,password)
+                if (user != null) {
+                    stocksDBHelper.clearHoldings()
+                    errorField.visibility = View.GONE
+                    startActivity(Intent(applicationContext, Portfolio::class.java))
+                } else {
+                    errorField.visibility = View.VISIBLE
+                    errorField.text = getString(R.string.login_err)
+                }
             }
         }
 
