@@ -1,4 +1,4 @@
 package com.example.finalinvestmentapp
 
-class User {
+class User(val username: String, var balance : Double) {
 }

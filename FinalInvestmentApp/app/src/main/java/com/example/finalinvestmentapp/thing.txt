@@ -1,0 +1,123 @@
+/*
+
+package com.example.hw12
+
+import android.graphics.BitmapFactory
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+
+class ComicAdapter(private val comicAdapterListener: ComicAdapterListener, private val comicList: ArrayList<Comic>): RecyclerView.Adapter<ComicAdapter.ViewHolder>(){
+
+    interface ComicAdapterListener {
+        fun click(position: Int)
+/*
+
+package com.example.hw12
+
+import android.graphics.BitmapFactory
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+
+class ComicAdapter(private val comicAdapterListener: ComicAdapterListener, private val comicList: ArrayList<Comic>): RecyclerView.Adapter<ComicAdapter.ViewHolder>(){
+
+    interface ComicAdapterListener {
+        fun click(position: Int)
+
+    }
+
+    class ViewHolder(itemView: View, private val comicAdapterListener: ComicAdapterListener): RecyclerView.ViewHolder(itemView) {
+        val rv_imageView: ImageView = itemView.findViewById<ImageView>(R.id.rv_imageView)
+        val rv_num: TextView = itemView.findViewById<TextView>(R.id.rv_num)
+        val rv_title: TextView = itemView.findViewById<TextView>(R.id.rv_title)
+
+        init {
+            itemView.setOnClickListener {
+                comicAdapterListener.click(bindingAdapterPosition)
+            }
+        }
+
+        fun update(comic: Comic) {
+            // https://discuss.kotlinlang.org/t/how-to-get-an-image-bitmap-using-a-bytearray-tried-bitmap-factory/28539
+            // https://developer.android.com/reference/android/graphics/BitmapFactory#decodeByteArray(byte[],%20int,%20int,%20android.graphics.BitmapFactory.Options)
+
+            val image = BitmapFactory.decodeByteArray(comic.image, 0, comic.image.size)
+            rv_imageView.setImageBitmap(image)
+            rv_num.text = comic.num.toString()
+            rv_title.hint = comic.title
+        }
+    }
+
+    override fun onCreateViewHolder(
+        p0: ViewGroup,
+        p1: Int
+    ): ViewHolder {
+        val view = LayoutInflater.from(p0.context)
+            .inflate(R.layout.comic_rv, p0, false)
+        return ViewHolder(view, comicAdapterListener)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, p1: Int) {
+        val item = comicList[p1]
+        holder.update(item)
+
+    }
+
+    override fun getItemCount(): Int {
+        return comicList.size
+    }
+}
+
+ */
+    }
+
+    class ViewHolder(itemView: View, private val comicAdapterListener: ComicAdapterListener): RecyclerView.ViewHolder(itemView) {
+        val rv_imageView: ImageView = itemView.findViewById<ImageView>(R.id.rv_imageView)
+        val rv_num: TextView = itemView.findViewById<TextView>(R.id.rv_num)
+        val rv_title: TextView = itemView.findViewById<TextView>(R.id.rv_title)
+
+        init {
+            itemView.setOnClickListener {
+                comicAdapterListener.click(bindingAdapterPosition)
+            }
+        }
+
+        fun update(comic: Comic) {
+            // https://discuss.kotlinlang.org/t/how-to-get-an-image-bitmap-using-a-bytearray-tried-bitmap-factory/28539
+            // https://developer.android.com/reference/android/graphics/BitmapFactory#decodeByteArray(byte[],%20int,%20int,%20android.graphics.BitmapFactory.Options)
+
+            val image = BitmapFactory.decodeByteArray(comic.image, 0, comic.image.size)
+            rv_imageView.setImageBitmap(image)
+            rv_num.text = comic.num.toString()
+            rv_title.hint = comic.title
+        }
+    }
+
+    override fun onCreateViewHolder(
+        p0: ViewGroup,
+        p1: Int
+    ): ViewHolder {
+        val view = LayoutInflater.from(p0.context)
+            .inflate(R.layout.comic_rv, p0, false)
+        return ViewHolder(view, comicAdapterListener)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, p1: Int) {
+        val item = comicList[p1]
+        holder.update(item)
+
+    }
+
+    override fun getItemCount(): Int {
+        return comicList.size
+    }
+}
+
+ */
