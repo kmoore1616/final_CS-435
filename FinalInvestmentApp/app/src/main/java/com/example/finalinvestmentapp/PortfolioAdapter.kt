@@ -12,8 +12,6 @@ class PortfolioAdapter(
 ) : RecyclerView.Adapter<PortfolioAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Placeholder item views. Replace android.R.layout.simple_list_item_2
-        // with a custom holding row layout when the final UI is ready.
         private val symbolTextView: TextView = itemView.findViewById(android.R.id.text1)
         private val quantityTextView: TextView = itemView.findViewById(android.R.id.text2)
 

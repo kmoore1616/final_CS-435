@@ -7,4 +7,11 @@
     <string name="signup">Sign-Up</string>
     <string name="pass_err">Please Enter A Password</string>
     <string name="login_err">Login Failed</string>
+    <string name="portfolio_title">Portfolio</string>
+    <string name="portfolio_subtitle">Your current holdings</string>
+    <string name="browse_stocks">Browse Stocks</string>
+    <string name="holdings">Holdings</string>
+    <string name="quantity_label">Shares</string>
+    <string name="browse_stocks_unavailable">Stock browsing will be added next.</string>
+    <string name="stock_graph_todo">Stock graph placeholder</string>
 </resources>

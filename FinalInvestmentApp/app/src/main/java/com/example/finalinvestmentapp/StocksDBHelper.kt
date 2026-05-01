@@ -29,6 +29,7 @@ class StocksDBHelper (context: Context):
         private const val DB_NAME = "holdings.sqlite"
         private const val DB_VERSION = 1
         private const val TABLE_HOLDINGS = "holdings"
+        private const val TABLE_SYMBOLS = "symbols"
         private const val COLUMN_ID = "_id"
         private const val COLUMN_SYMBOL = "symbol"
         private const val COLUMN_QUANTITY = "quantity"
@@ -43,6 +44,14 @@ class StocksDBHelper (context: Context):
             )
         """.trimIndent()
         db?.execSQL(query)
+
+        val query2 = """
+            CREATE TABLE $TABLE_SYMBOLS(
+                $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                $COLUMN_SYMBOL TEXT NOT NULL UNIQUE
+            )
+        """.trimIndent()
+        db?.execSQL(query2)
     }
 
     fun isEmpty(): Boolean{
@@ -58,19 +67,44 @@ class StocksDBHelper (context: Context):
             "1"
         )
 
-
         val empty= cursor.count == 0
         cursor.close()
         return empty
     }
 
-    fun saveHolding(holding: Holding){
+    fun isSymbolEmpty(): Boolean{
+        val db = readableDatabase
+        val cursor = db.query(
+            TABLE_SYMBOLS,
+            arrayOf(COLUMN_ID),
+            null,
+            null,
+            null,
+            null,
+            null,
+            "1"
+        )
+        val empty= cursor.count == 0
+        cursor.close()
+        return empty
+    }
+
+
+        fun saveHolding(holding: Holding){
         val db = writableDatabase
         val holdingToSave = ContentValues().apply {
             put(COLUMN_SYMBOL, holding.symbol)
             put(COLUMN_QUANTITY, holding.quantity)
         }
         db.replace(TABLE_HOLDINGS, null, holdingToSave)
+    }
+
+    fun addSymbol(symbol: String) {
+        val db = writableDatabase
+        val symbolToSave = ContentValues().apply {
+            put(COLUMN_SYMBOL, symbol)
+        }
+        db.insert(TABLE_SYMBOLS, null, symbolToSave)
     }
 
     fun replaceHoldings(holdings: List<Holding>){
@@ -109,11 +143,20 @@ class StocksDBHelper (context: Context):
         )
     }
 
-
-    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int)
-    {
-        db?.execSQL("DROP TABLE IF EXISTS $TABLE_HOLDINGS")
-        onCreate(db)
+    fun getAllSymbolsCursor(): Cursor {
+        val db = readableDatabase
+        return db.query(
+            TABLE_SYMBOLS,
+            arrayOf(COLUMN_ID, COLUMN_SYMBOL),
+            null,
+            null,
+            null,
+            null,
+            COLUMN_SYMBOL
+        )
     }
+
+
+    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {}
 
 }
