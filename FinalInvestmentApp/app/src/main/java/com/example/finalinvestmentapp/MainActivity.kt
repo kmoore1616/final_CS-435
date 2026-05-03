@@ -36,14 +36,15 @@ class MainActivity : AppCompatActivity() {
 
     fun onLoginClick(view: View) {
         lifecycleScope.launch {
-            val username = usernameField.text.toString()
-            val password = passwordField.text.toString()
+            val username = usernameField.text.toString().replace(" ", "")
+            val password = passwordField.text.toString().replace(" ", "")
             if (username.isEmpty() || password.isEmpty()) {
                 errorField.visibility = View.VISIBLE
                 errorField.text = getString(R.string.pass_err)
             } else {
                 val user = BackendAPIHelper.authenticateUser(username,password, stocksDBHelper)
                 if (user != null) {
+                    User.loggedInUser = user
                     errorField.visibility = View.GONE
                     startActivity(Intent(applicationContext, Portfolio::class.java))
                 } else {
@@ -63,6 +64,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 val user = BackendAPIHelper.createUser(username,password)
                 if (user != null) {
+                    User.loggedInUser = user
                     stocksDBHelper.clearHoldings()
                     errorField.visibility = View.GONE
                     startActivity(Intent(applicationContext, Portfolio::class.java))

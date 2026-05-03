@@ -20,7 +20,7 @@ class PortfolioAdapter(
             val quantity = cursor.getDouble(cursor.getColumnIndexOrThrow("quantity"))
 
             symbolTextView.text = symbol
-            quantityTextView.text = quantity.toString()
+            quantityTextView.text = "Shares: $quantity"
         }
     }
 

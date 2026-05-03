@@ -72,6 +72,35 @@ class StocksDBHelper (context: Context):
         return empty
     }
 
+    fun getSymbolIndex(symbol: String): Int{
+        val db = readableDatabase
+
+        val existsCursor = db.query(
+            TABLE_SYMBOLS,
+            arrayOf(COLUMN_ID),
+            "$COLUMN_SYMBOL = ?",
+            arrayOf(symbol),
+            null,
+            null,
+            null,
+            "1"
+        )
+        if(!existsCursor.moveToFirst()){
+            existsCursor.close()
+            return -1
+        }
+        val searchCursor = db.rawQuery(
+            "SELECT COUNT(*) FROM $TABLE_SYMBOLS WHERE $COLUMN_SYMBOL < ?",
+            arrayOf(symbol)
+            )
+        searchCursor.moveToFirst()
+        val index = searchCursor.getInt(0)
+        searchCursor.close()
+        existsCursor.close()
+        return index
+    }
+
+
     fun isSymbolEmpty(): Boolean{
         val db = readableDatabase
         val cursor = db.query(
@@ -90,21 +119,41 @@ class StocksDBHelper (context: Context):
     }
 
 
-        fun saveHolding(holding: Holding){
-        val db = writableDatabase
-        val holdingToSave = ContentValues().apply {
-            put(COLUMN_SYMBOL, holding.symbol)
-            put(COLUMN_QUANTITY, holding.quantity)
-        }
-        db.replace(TABLE_HOLDINGS, null, holdingToSave)
-    }
-
     fun addSymbol(symbol: String) {
         val db = writableDatabase
         val symbolToSave = ContentValues().apply {
             put(COLUMN_SYMBOL, symbol)
         }
         db.insert(TABLE_SYMBOLS, null, symbolToSave)
+    }
+
+    fun buyHolding(symbol: String, quantity: Double) {
+        val db = writableDatabase
+        val cursor = db.query(
+            TABLE_HOLDINGS,
+            arrayOf(COLUMN_QUANTITY),
+            "$COLUMN_SYMBOL = ?",
+            arrayOf(symbol),
+            null,
+            null,
+            null,
+            "1"
+        )
+
+        if(cursor.moveToFirst()){
+            val currentQuantity = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_QUANTITY))
+            val holdingToUpdate = ContentValues().apply {
+                put(COLUMN_QUANTITY, currentQuantity + quantity)
+            }
+            db.update(TABLE_HOLDINGS, holdingToUpdate, "$COLUMN_SYMBOL = ?", arrayOf(symbol))
+        } else {
+            val holdingToAdd = ContentValues().apply {
+                put(COLUMN_SYMBOL, symbol)
+                put(COLUMN_QUANTITY, quantity)
+            }
+            db.insert(TABLE_HOLDINGS, null, holdingToAdd)
+        }
+        cursor.close()
     }
 
     fun replaceHoldings(holdings: List<Holding>){
@@ -154,6 +203,28 @@ class StocksDBHelper (context: Context):
             null,
             COLUMN_SYMBOL
         )
+    }
+
+
+    fun getSymbols(offset: Int, limit: Int): ArrayList<String> {
+        val db = readableDatabase
+        val symbols = arrayListOf<String>()
+        val cursor = db.query(
+            TABLE_SYMBOLS,
+            arrayOf(COLUMN_SYMBOL),
+            null,
+            null,
+            null,
+            null,
+            COLUMN_SYMBOL,
+            "$offset, $limit"
+        )
+
+        while (cursor.moveToNext()) {
+            symbols.add(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SYMBOL)))
+        }
+        cursor.close()
+        return symbols
     }
 
 

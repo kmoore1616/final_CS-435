@@ -17,11 +17,9 @@ class StockAPIHelper {
     companion object {
         private const val BASE_URL = "https://finnhub.io/api/v1"
         private const val API_KEY = "d7em1v1r01qi33g6qipgd7em1v1r01qi33g6qiq0"
-        private const val PAGE_SIZE = 20
-        private var sp500StocksSortedByPrice: ArrayList<Stock>? = null
 
-        suspend fun getStockPrice(symbol: String): Double? {
-            var price: Double? = null
+        suspend fun getStock(symbol: String): Stock? {
+            var stock: Stock? = null
             withContext(Dispatchers.IO) {
                 var connection: HttpURLConnection?
                 connection = null
@@ -39,15 +37,23 @@ class StockAPIHelper {
                     Log.d("request", response)
 
                     val stockJSON = JSONObject(response)
-                    price = stockJSON.getDouble("c")
+                    if(!(stockJSON.isNull("c") || stockJSON.isNull("dp"))) {
+                        val price = stockJSON.getDouble("c")
+                        val percentChange = stockJSON.getDouble("dp")
+                        stock = Stock(symbol, price, percentChange)
+                    }else{
+                        stock = Stock(symbol, null, null)
+
+                    }
                 } catch (e: IOException) {
                     e.printStackTrace()
                 } finally {
                     connection?.disconnect()
                 }
             }
-            return price
+            return stock
         }
+
 
         suspend fun fetchSymbols(dbHelper: StocksDBHelper): Boolean {
             var success = false
@@ -69,14 +75,14 @@ class StockAPIHelper {
                         val symbol = obj.getString("symbol")
                         dbHelper.addSymbol(symbol)
                     }
-
+                    success = true
                 } catch (e: IOException) {
                     e.printStackTrace()
                 } finally {
                     connection?.disconnect()
                 }
             }
-            return false
+            return success
         }
     }
 }
